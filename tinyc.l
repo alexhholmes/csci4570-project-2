@@ -19,7 +19,7 @@ TYPE "int"|"float"|"char"|"void"
 /* Keywords */
 "if"                    { return(IF) }
 "else"                  { return(ELSE) }
-"while"                 { return(WHILE) }
+"while"        54         { return(WHILE) }
 "char"                  { return(CHAR) }
 "int"                   { return(INT) }
 "float"                 { return(FLOAT) }
@@ -55,7 +55,7 @@ TYPE "int"|"float"|"char"|"void"
 
 ";"                     { return(SEMICOLON) }
 
-",                      { return(',') }
+","                      { return(',') }
 
 
 {IDENTIFIER}            { strcpy(yylval.charArray, yytext);

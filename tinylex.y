@@ -201,3 +201,7 @@ program: func_deflist main func_deflist
 	{printf("Program\n");}
 	;
 
+%%
+void yyerror(char *s) {
+	printf ("\n FOUND ERROR: %s\n",s);
+}
