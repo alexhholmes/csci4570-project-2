@@ -125,7 +125,7 @@ ret_st: RETURN SEMICOLON
 	{printf("Return Statement\n");}
 	;
 
-st_list: EPS 
+st_list: /* epsilon */ 
 	| st st_list
 	{printf("Statement List\n");}
 	;
@@ -167,7 +167,7 @@ var_def: TYPE IDENTIFIER EQUAL constant SEMICOLON
 	{printf("Variable Definition\n");}
 	;
 
-var_deflist: EPS
+var_deflist: /* epsilon */
 	| var_def var_deflist
 	{printf("Variable Definition List\n");}
 	;
@@ -188,7 +188,7 @@ func_def: return_type IDENTIFIER LTPAR func_paramlist RTPAR LTBRACE func_body RT
 
 /* programs */
 
-func_deflist: EPS
+func_deflist: /* epsilon */
 	| func_def func_deflist
 	{printf("Function Definition List\n");}
 	;
