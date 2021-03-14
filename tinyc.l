@@ -11,6 +11,8 @@ FLOAT {DIGIT}+\.{DIGIT}+
 STRING \"(\\.|[^"\\])*\"
 
 CONSTANT {CHAR}|{INTEGER}|{FLOAT}|{STRING}
+TYPE "int"|"float"|"char"|"void"
+
 
 %%
 
@@ -29,6 +31,7 @@ CONSTANT {CHAR}|{INTEGER}|{FLOAT}|{STRING}
 ")"                     { return(RTPAR) }
 "{"                     { return(LTBRACE) }
 "}"                     { return(RTBRACE) }
+
 
 /* Arithmetic Operators */
 "+"                     { return(PLUS) }
@@ -51,6 +54,8 @@ CONSTANT {CHAR}|{INTEGER}|{FLOAT}|{STRING}
 "&"                     { return(PTR) }
 
 ";"                     { return(SEMICOLON) }
+
+",                      { return(',') }
 
 
 {IDENTIFIER}            { strcpy(yylval.charArray, yytext);
