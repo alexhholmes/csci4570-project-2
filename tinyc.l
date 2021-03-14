@@ -17,52 +17,51 @@ TYPE "int"|"float"|"char"|"void"
 %%
 
 /* Keywords */
-"if"                    { return(IF) }
-"else"                  { return(ELSE) }
-"while"        54         { return(WHILE) }
-"char"                  { return(CHAR) }
-"int"                   { return(INT) }
-"float"                 { return(FLOAT) }
-"return"                { return(RETURN) }
-"void"                  { return(VOID) }
+"if"                    { return(IF); }
+"else"                  { return(ELSE); }
+"while"                 { return(WHILE); }
+"char"                  { return(CHAR); }
+"int"                   { return(INT); }
+"float"                 { return(FLOAT); }
+"return"                { return(RETURN); }
+"void"                  { return(VOID); }
 
 /* Separators */
-"("                     { return(LTPAR) }
-")"                     { return(RTPAR) }
-"{"                     { return(LTBRACE) }
-"}"                     { return(RTBRACE) }
+"("                     { return(LTPAR); }
+")"                     { return(RTPAR); }
+"{"                     { return(LTBRACE); }
+"}"                     { return(RTBRACE); }
 
 
 /* Arithmetic Operators */
-"+"                     { return(PLUS) }
-"-"                     { return(MINUS) }
-"*"                     { return(MULTIPLY) }
-"/"                     { return(DIVIDE) }
+"+"                     { return(PLUS); }
+"-"                     { return(MINUS); }
+"*"                     { return(MULTIPLY); }
+"/"                     { return(DIVIDE); }
 
 /* Assignment */
-"="                     { return(ASSIGNMENT) }
+"="                     { return(ASSIGNMENT); }
 
 /* Comparisons */
-"=="                    { return(EQUAL) }
-"!="                    { return(NOT_EQUAL) }
-">"                     { return(GT) }
-"<"                     { return(LT) }
-">="                    { return(GTE) }
-"<="                    { return(LTE) }
+"=="                    { return(EQUAL); }
+"!="                    { return(NOT_EQUAL); }
+">"                     { return(GT); }
+"<"                     { return(LT); }
+">="                    { return(GTE); }
+"<="                    { return(LTE); }
 
 /* Pointer Operator */
-"&"                     { return(PTR) }
+"&"                     { return(PTR); }
 
-";"                     { return(SEMICOLON) }
+";"                     { return(SEMICOLON); }
 
-","                      { return(',') }
-
+","                      { return(','); }
 
 {IDENTIFIER}            { strcpy(yylval.charArray, yytext);
                           return(IDENTIFIER); }
 
 {CHAR}                  { yylval.charValue = yytext[1];
-                          return(CHAR_CONST) }
+                          return(CHAR_CONST); }
 
 {INTEGER}               { yylval.intValue = atio(yytext);                               
                           return(INT_CONST); }
@@ -77,6 +76,10 @@ TYPE "int"|"float"|"char"|"void"
 [\n\r]                  { num_line++; }
 
 %%
+
+int yywrap() {
+        return 1;
+}
 
 int main(int argc, char **argv)
 {
