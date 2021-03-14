@@ -1,14 +1,16 @@
+    int num_line = 1;
+
 DIGIT   [0-9]
 LETTER  [a-zA-Z]
 ESCAPE_CHAR [\\'"nt]
 
 IDENTIFIER ({LETTER}|_)({LETTER}|{DIGIT}|_)*
+CHAR (\'\\{ESCAPE_CHAR}\')|(\'{LETTER}\')
+INTEGER {DIGIT}+
+FLOAT {DIGIT}+\.{DIGIT}+
+STRING \"(\\.|[^"\\])*\"
 
-IDENTIFIER
-CHAR
-INTEGER
-FLOAT
-STRING
+CONSTANT {CHAR}|{INTEGER}|{FLOAT}|{STRING}
 
 %%
 
@@ -45,7 +47,11 @@ STRING
 ">="                    { return(GTE) }
 "<="                    { return(LTE) }
 
+/* Pointer Operator */
 "&"                     { return(PTR) }
+
+";"                     { return(SEMICOLON) }
+
 
 {IDENTIFIER}            { strcpy(yylval.charArray, yytext);
                           return(IDENTIFIER); }
@@ -62,16 +68,20 @@ STRING
 {STRING}                { yylval.stringValue = yytext;
                           return (STRING_CONST); }
 
+[ \t]                   /* skip whitespace */
+[\n\r]                  { num_line++; }
+
 %%
 
- int main(int argc, char **argv)
- {
-     ++argv, --argc;  /* Skip over program name */
-     if (argc > 0)
-             yyin = fopen( argv[0], "r" );
-     else
-             yyin = stdin;
+int main(int argc, char **argv)
+{
+    ++argv, --argc;  /* Skip over program name */
+    if (argc > 0)
+            yyin = fopen( argv[0], "r" );
+    else
+            yyin = stdin;
 
-     yylex();
-     printf("%d\n", tokens);
- }
+    yylex();
+
+    return 0;
+}
