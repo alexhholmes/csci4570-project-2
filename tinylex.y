@@ -203,5 +203,23 @@ program: func_deflist main func_deflist
 
 %%
 void yyerror(char *s) {
-	printf ("\n FOUND ERROR: %s\n",s);
+	printf ("\n Error: %s\n",s);
+	exit(1);
+}
+
+int main(int argc, char *argv[]) {
+    // Set yyin stream to given arg filename or stdin
+    if (argc > 1) {
+        yyin = fopen(argv[1], "r");
+    } else {
+        yyin = stdin;
+    }
+
+	// Parsing
+	flag = yyparse();
+	if (argc > 1) {
+		fclose(yyin);
+	}
+
+	return flag;
 }
