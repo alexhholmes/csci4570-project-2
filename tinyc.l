@@ -55,7 +55,7 @@ TYPE "int"|"float"|"char"|"void"
 
 ";"                     { return(SEMICOLON); }
 
-","                      { return(','); }
+","                     { return(COMMA); }
 
 {IDENTIFIER}            { strcpy(yylval.charArray, yytext);
                           return(IDENTIFIER); }

@@ -1,7 +1,7 @@
 %{
 #include <stdlib.h>
-void yyerror(char *);
 #include "y.tab.h"
+void yyerror(char *);
 %}
 
 /* Keywords */   
@@ -14,16 +14,11 @@ void yyerror(char *);
 %token RETURN
 %token VOID
 
-/* Boolean operators */
-%token AND
-%token OR
-
-
 /* Pairs of tokens */
-%token LBRACE   /* { */
-%token RBRACE   /* } */    
-%token LPAR     /* ( */
-%token RPAR     /* ) */
+%token LTPAR     /* ( */
+%token RTPAR     /* ) */
+%token LTBRACE   /* { */
+%token RTBRACE   /* } */    
 
 /* Basic separators */
 %token SEMICOLON
@@ -48,18 +43,26 @@ void yyerror(char *);
 
 %token PTR /* & */
 
+%token IDENTIFIER
+%token CHAR_CONST
+%token INT_CONST
+%token FLOAT_CONST
+%token STRING_CONST
+
+%token TYPE
+
 %% 
 
 primary_exp: IDENTIFIER
 	| constant
-	| STRING_LITERAL
-	| '(' expression ')'
+	| STRING_CONST
+	| '(' exp ')'
 	{printf("Primary Expression\n");}
 	;
 
 constant: INT_CONST
 	| FLOAT_CONST
-	| STRING_CONSTANT
+	| STRING_CONST
 	| CHAR_CONST;
 
 func_arglist: PTR IDENTIFIER
@@ -68,7 +71,7 @@ func_arglist: PTR IDENTIFIER
 	{printf("FunctionArgList\n");}
 	;
 
-func_call: INDENTIFIER LTPAR func_arglist RTPAR
+func_call: IDENTIFIER LTPAR func_arglist RTPAR
 	| IDENTIFIER LTPAR RTPAR
 	{printf("Function Call\n");}
 	;
@@ -107,7 +110,7 @@ exp: comp_exp
 
 /* statements */
 
-assign_st: INDENTIFIER ASSIGNMENT exp SEMICOLON
+assign_st: IDENTIFIER ASSIGNMENT exp SEMICOLON
 	{printf("Assignment Statement\n");}
 	;
 
