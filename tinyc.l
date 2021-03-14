@@ -1,4 +1,4 @@
-    int num_line = 1;
+        int num_line = 1;
 
 DIGIT   [0-9]
 LETTER  [a-zA-Z]
@@ -78,18 +78,6 @@ TYPE "int"|"float"|"char"|"void"
 %%
 
 int yywrap() {
+        // Stop scanning at EOF
         return 1;
-}
-
-int main(int argc, char **argv)
-{
-    ++argv, --argc;  /* Skip over program name */
-    if (argc > 0)
-            yyin = fopen( argv[0], "r" );
-    else
-            yyin = stdin;
-
-    yylex();
-
-    return 0;
 }
