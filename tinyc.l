@@ -1,4 +1,10 @@
-        int num_line = 1;
+%{
+#include "tinylex.tab.h"
+#include <math.h>
+extern void yyerror(char *s);
+
+int num_line = 1;
+%}
 
 DIGIT   [0-9]
 LETTER  [a-zA-Z]

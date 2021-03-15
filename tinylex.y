@@ -1,8 +1,10 @@
 %{
 #include <stdlib.h>
-#include "y.tab.h"
+#include <stdio.h>
+#include "tinylex.tab.h"
 
 extern int yylex();
+extern char* yytext;
 void yyerror(char *s);
 %}
 
@@ -221,7 +223,7 @@ int main(int argc, char *argv[]) {
     }
 
 	// Parsing
-	flag = yyparse();
+	int flag = yyparse();
 	if (argc > 1) {
 		fclose(yyin);
 	}
