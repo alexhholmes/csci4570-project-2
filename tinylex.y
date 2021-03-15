@@ -53,6 +53,13 @@ extern void yyerror(char *s);
 %token FLOAT_CONST
 %token STRING_CONST
 
+%left ASSIGNMENT
+%left EQUAL NOT_EQUAL
+%left GT LT GTE LTE
+%left PLUS MINUS
+%left MULTIPLY DIVIDE
+%left PTR
+
 %union {
 	char* charArray;
 	int intValue;
@@ -75,12 +82,13 @@ primary_exp: IDENTIFIER
 constant: INT_CONST
 	| FLOAT_CONST
 	| STRING_CONST
-	| CHAR_CONST;
+	| CHAR_CONST
+	;
 
 type: INT
 	| FLOAT
 	| CHAR
-	| VOID
+	;
 
 func_arglist: PTR IDENTIFIER
 	| exp
@@ -154,7 +162,7 @@ st: assign_st
 
 /* functions */
 
-return_type: VOID
+return_type: 
 	| type 
 	;
 
