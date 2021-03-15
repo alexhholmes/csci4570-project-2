@@ -63,7 +63,7 @@ TYPE "int"|"float"|"char"|"void"
 {CHAR}                  { yylval.charValue = yytext[1];
                           return(CHAR_CONST); }
 
-{INTEGER}               { yylval.intValue = atio(yytext);                               
+{INTEGER}               { yylval.intValue = atoi(yytext);                               
                           return(INT_CONST); }
 
 {FLOAT}                 { yylval.floatValue = atof(yytext);                                
@@ -77,7 +77,7 @@ TYPE "int"|"float"|"char"|"void"
 
 %%
 
-int yywrap() {
+int yywrap(void) {
         // Stop scanning at EOF
         return 1;
 }

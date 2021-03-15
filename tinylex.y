@@ -55,6 +55,14 @@ void yyerror(char *s);
 
 %token TYPE
 
+%union {
+	char* charArray;
+	int intValue;
+	char charValue;
+	float floatValue;
+	char* stringValue;
+}
+
 %% 
 
 primary_exp: IDENTIFIER
@@ -210,23 +218,11 @@ program: func_deflist main func_deflist
 
 %%
 void yyerror(char *s) {
-	printf ("\n Error: %s\n",s);
+	printf("\n Error: %s\n",s);
 	exit(1);
 }
 
-int main(int argc, char *argv[]) {
-    // Set yyin stream to given arg filename or stdin
-    if (argc > 1) {
-        yyin = fopen(argv[1], "r");
-    } else {
-        yyin = stdin;
-    }
-
-	// Parsing
-	int flag = yyparse();
-	if (argc > 1) {
-		fclose(yyin);
-	}
-
-	return flag;
+int main(void) {
+	yyparse();
+	return 0;
 }
