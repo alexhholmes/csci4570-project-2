@@ -16,7 +16,6 @@ TYPE "int"|"float"|"char"|"void"
 
 %%
 
-/* Keywords */
 "if"                    { return(IF); }
 "else"                  { return(ELSE); }
 "while"                 { return(WHILE); }
@@ -26,23 +25,19 @@ TYPE "int"|"float"|"char"|"void"
 "return"                { return(RETURN); }
 "void"                  { return(VOID); }
 
-/* Separators */
 "("                     { return(LTPAR); }
 ")"                     { return(RTPAR); }
 "{"                     { return(LTBRACE); }
 "}"                     { return(RTBRACE); }
 
 
-/* Arithmetic Operators */
 "+"                     { return(PLUS); }
 "-"                     { return(MINUS); }
 "*"                     { return(MULTIPLY); }
 "/"                     { return(DIVIDE); }
 
-/* Assignment */
 "="                     { return(ASSIGNMENT); }
 
-/* Comparisons */
 "=="                    { return(EQUAL); }
 "!="                    { return(NOT_EQUAL); }
 ">"                     { return(GT); }
@@ -50,7 +45,6 @@ TYPE "int"|"float"|"char"|"void"
 ">="                    { return(GTE); }
 "<="                    { return(LTE); }
 
-/* Pointer Operator */
 "&"                     { return(PTR); }
 
 ";"                     { return(SEMICOLON); }
