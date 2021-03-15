@@ -4,8 +4,7 @@
 #include "tinylex.tab.h"
 
 extern int yylex();
-extern char* yytext;
-void yyerror(char *s);
+extern void yyerror(char *s);
 %}
 
 /* Keywords */   
@@ -17,6 +16,7 @@ void yyerror(char *s);
 %token FLOAT
 %token RETURN
 %token VOID
+%token MAIN
 
 /* Pairs of tokens */
 %token LTPAR     /* ( */
@@ -53,8 +53,6 @@ void yyerror(char *s);
 %token FLOAT_CONST
 %token STRING_CONST
 
-%token TYPE
-
 %union {
 	char* charArray;
 	int intValue;
@@ -65,11 +63,13 @@ void yyerror(char *s);
 
 %% 
 
+program: func_deflist main func_deflist
+	;
+
 primary_exp: IDENTIFIER
 	| constant
-	| STRING_CONST
-	| '(' exp ')'
-	{printf("Primary Expression\n");}
+	| func_call
+	| LTPAR exp RTPAR
 	;
 
 constant: INT_CONST
@@ -77,33 +77,33 @@ constant: INT_CONST
 	| STRING_CONST
 	| CHAR_CONST;
 
+type: INT
+	| FLOAT
+	| CHAR
+	| VOID
+
 func_arglist: PTR IDENTIFIER
 	| exp
-	| exp ',' func_arglist
-	{printf("FunctionArgList\n");}
+	| exp COMMA func_arglist
 	;
 
 func_call: IDENTIFIER LTPAR func_arglist RTPAR
 	| IDENTIFIER LTPAR RTPAR
-	{printf("Function Call\n");}
 	;
 
 unary_exp: primary_exp 
 	| PLUS unary_exp
 	| MINUS unary_exp
-	{printf("Unary Expression\n");}
 	;
 
 mult_exp: unary_exp
 	| mult_exp MULTIPLY unary_exp
 	| mult_exp DIVIDE unary_exp
-	{printf("Multiplicative Expression\n");}
 	;
 
 add_exp: mult_exp
 	| add_exp PLUS add_exp
 	| add_exp MINUS add_exp
-	{printf("Additive Expression\n");}
 	;
 
 comp_exp: add_exp
@@ -111,46 +111,37 @@ comp_exp: add_exp
 	| add_exp LTE add_exp
 	| add_exp GT add_exp
 	| add_exp GTE add_exp
-	{printf("Comparison Expression\n");}
 	;
 
 exp: comp_exp
 	| comp_exp EQUAL comp_exp
 	| comp_exp NOT_EQUAL comp_exp
-	{printf("Expression\n");}
 	;
 
 /* statements */
 
 assign_st: IDENTIFIER ASSIGNMENT exp SEMICOLON
-	{printf("Assignment Statement\n");}
 	;
 
 if_st: IF LTPAR exp RTPAR st
 	| IF LTPAR exp RTPAR st ELSE st
-	{printf("If Statement\n");}
 	;
 
 while_st: WHILE RTPAR exp LTPAR st
-	{printf("While Statement\n");}
 	;
 
 ret_st: RETURN SEMICOLON
 	| RETURN exp SEMICOLON
-	{printf("Return Statement\n");}
 	;
 
 st_list: /* epsilon */ 
 	| st st_list
-	{printf("Statement List\n");}
 	;
 
 block_st: LTBRACE st_list RTBRACE
-	{printf("Block Statement\n");}
 	;
 
 empty_st: SEMICOLON
-	{printf("EMPTY STATEMENT\n");}
 	;
 
 st: assign_st
@@ -159,67 +150,56 @@ st: assign_st
 	| ret_st
 	| block_st
 	| empty_st
-	{printf("Statement\n");}
 	;
 
 /* functions */
 
 return_type: VOID
-	| TYPE 
-	{printf("Return Type\n");}
+	| type 
 	;
 
-func_param: TYPE IDENTIFIER
-	{printf("Function Parameter\n");}
+func_param: type IDENTIFIER
 	;
 
 func_paramlist: func_param
-	| func_param ',' func_param
-	{printf("Function Parameter List\n");}
+	| func_param COMMA func_param
 	;
 
-var_def: TYPE IDENTIFIER EQUAL constant SEMICOLON
-	{printf("Variable Definition\n");}
+var_def: type IDENTIFIER EQUAL constant SEMICOLON
 	;
 
 var_deflist: /* epsilon */
 	| var_def var_deflist
-	{printf("Variable Definition List\n");}
 	;
 
 func_stlist: ret_st
 	| st func_stlist
-	{printf("Function Statement List\n");}
 	;
 
 func_body: var_deflist func_stlist
-	{printf("Function Body\n");}
 	;
 
 func_def: return_type IDENTIFIER LTPAR func_paramlist RTPAR LTBRACE func_body RTBRACE
 	| return_type IDENTIFIER LTPAR VOID RTPAR LTBRACE func_body RTBRACE
-	{printf("Function Definition\n");}
 	;
 
 /* programs */
 
 func_deflist: /* epsilon */
 	| func_def func_deflist
-	{printf("Function Definition List\n");}
 	;
 
-main: INT 'main' LTPAR VOID RTPAR LTBRACE func_body RTBRACE
-	{printf("Main\n");}
-	;
-
-program: func_deflist main func_deflist
-	{printf("Program\n");}
+main: INT MAIN LTPAR VOID RTPAR LTBRACE func_body RTBRACE
 	;
 
 %%
 void yyerror(char *s) {
 	printf("\n Error: %s\n",s);
-	exit(1);
+}
+
+int yywrap() {
+        // Stop scanning at EOF
+        return 1;
 }
 
 int main(void) {

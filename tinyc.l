@@ -1,7 +1,6 @@
 %{
 #include "tinylex.tab.h"
 #include <math.h>
-extern void yyerror(char *s);
 
 int num_line = 1;
 %}
@@ -16,10 +15,6 @@ INTEGER {DIGIT}+
 FLOAT {DIGIT}+\.{DIGIT}+
 STRING \"(\\.|[^"\\])*\"
 
-CONSTANT {CHAR}|{INTEGER}|{FLOAT}|{STRING}
-TYPE "int"|"float"|"char"|"void"
-
-
 %%
 
 "if"                    { return(IF); }
@@ -30,6 +25,7 @@ TYPE "int"|"float"|"char"|"void"
 "float"                 { return(FLOAT); }
 "return"                { return(RETURN); }
 "void"                  { return(VOID); }
+"main"                  { return(MAIN); }
 
 "("                     { return(LTPAR); }
 ")"                     { return(RTPAR); }
@@ -76,8 +72,3 @@ TYPE "int"|"float"|"char"|"void"
 [\n\r]                  { num_line++; }
 
 %%
-
-int yywrap(void) {
-        // Stop scanning at EOF
-        return 1;
-}
