@@ -1,7 +1,9 @@
 %{
 #include <stdlib.h>
 #include "y.tab.h"
-void yyerror(char *);
+
+extern int yylex();
+void yyerror(char *s);
 %}
 
 /* Keywords */   
