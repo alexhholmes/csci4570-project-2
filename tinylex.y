@@ -48,6 +48,7 @@ extern void yyerror(char *s);
 %token PTR /* & */
 
 %token IDENTIFIER
+%token SPECIALCASEIDENTIFIER
 %token CHAR_CONST
 %token INT_CONST
 %token FLOAT_CONST
@@ -77,7 +78,8 @@ program: func_deflist main func_deflist
 	;
 
 primary_exp: constant
-	| IDENTIFIER y;
+	| IDENTIFIER
+	| func_call
 	| LTPAR exp RTPAR
 	;
 
@@ -97,8 +99,7 @@ func_arglist: PTR IDENTIFIER
 	| exp COMMA func_arglist
 	;
 
-
-y: | LTPAR x;
+func_call: SPECIALCASEIDENTIFIER LTPAR x;
 
 x: func_arglist RTPAR | RTPAR;
 
