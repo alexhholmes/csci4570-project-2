@@ -53,7 +53,7 @@ STRING \"(\\.|[^"\\])*\"
 
 ","                     { return(COMMA); }
 
-{IDENTIFIER}            { strcpy(yylval.charArray, yytext);
+{IDENTIFIER}            { yylval.charArray = strdup(yytext);
                           return(IDENTIFIER); }
 
 {CHAR}                  { yylval.charValue = yytext[1];
