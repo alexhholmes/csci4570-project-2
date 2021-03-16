@@ -99,7 +99,7 @@ func_arglist: PTR IDENTIFIER
 	| exp COMMA func_arglist
 	;
 
-func_call: SPECIALCASEIDENTIFIER LTPAR x;
+func_call: IDENTIFIER LTPAR x;
 
 x: func_arglist RTPAR | RTPAR;
 
@@ -177,7 +177,7 @@ func_paramlist: func_param
 	| func_param COMMA func_param
 	;
 
-var_def: type IDENTIFIER EQUAL constant SEMICOLON
+var_def: type IDENTIFIER ASSIGNMENT constant SEMICOLON
 	;
 
 var_deflist: /* epsilon */
@@ -215,6 +215,9 @@ int yywrap() {
 }
 
 int main(void) {
+	#ifdef YYDEBUG
+  	yydebug = 1;
+	#endif
 	yyparse();
 	return 0;
 }
