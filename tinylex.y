@@ -76,9 +76,8 @@ extern void yyerror(char *s);
 program: func_deflist main func_deflist
 	;
 
-primary_exp: IDENTIFIER
-	| constant
-	| func_call
+primary_exp: constant
+	| IDENTIFIER y;
 	| LTPAR exp RTPAR
 	;
 
@@ -98,9 +97,10 @@ func_arglist: PTR IDENTIFIER
 	| exp COMMA func_arglist
 	;
 
-func_call: IDENTIFIER LTPAR func_arglist RTPAR
-	| IDENTIFIER LTPAR RTPAR
-	;
+
+y: | LTPAR x;
+
+x: func_arglist RTPAR | RTPAR;
 
 unary_exp: primary_exp 
 	| PLUS unary_exp
@@ -196,8 +196,8 @@ func_def: return_type IDENTIFIER LTPAR func_paramlist RTPAR LTBRACE func_body RT
 
 /* programs */
 
-func_deflist: /* epsilon */
-	| func_def func_deflist
+func_deflist: 
+	| func_deflist func_def 
 	;
 
 main: INT MAIN LTPAR VOID RTPAR LTBRACE func_body RTBRACE
