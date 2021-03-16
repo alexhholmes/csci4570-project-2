@@ -60,6 +60,9 @@ extern void yyerror(char *s);
 %left MULTIPLY DIVIDE
 %left PTR
 
+%nonassoc NO_ELSE
+%nonassoc ELSE
+
 %union {
 	char* charArray;
 	int intValue;
@@ -131,9 +134,9 @@ exp: comp_exp
 assign_st: IDENTIFIER ASSIGNMENT exp SEMICOLON
 	;
 
-if_st: IF LTPAR exp RTPAR st
-	| IF LTPAR exp RTPAR st ELSE st
-	;
+if_st: IF LTPAR exp RTPAR st %prec NO_ELSE
+  | IF LTPAR exp RTPAR st ELSE st
+  ;
 
 while_st: WHILE RTPAR exp LTPAR st
 	;
@@ -162,7 +165,7 @@ st: assign_st
 
 /* functions */
 
-return_type: 
+return_type: VOID
 	| type 
 	;
 
