@@ -12,6 +12,7 @@ int num_line = 1;
 DIGIT   [0-9]
 LETTER  [a-zA-Z]
 ESCAPE_CHAR [\\'"nt]
+SPECIAL_CHAR []
 
 IDENTIFIER ({LETTER}|_)({LETTER}|{DIGIT}|_)*
 CHAR (\'\\{ESCAPE_CHAR}\')|(\'{LETTER}\')

@@ -9,10 +9,9 @@
 /* Token types */
 #define UNDEF 0
 #define INT_TYPE 1
-#define REAL_TYPE 2
-#define STRING_TYPE 3
-#define LOGIC_TYPE 4
-#define FUNCTION_TYPE 5
+#define FLOAT_TYPE 2
+#define CHAR_TYPE 3
+#define FUNCTION_TYPE 4
 
 /* Function parameter passing type */
 #define BY_VALUE 1

@@ -1,6 +1,7 @@
 %{
 #include "tinylex.tab.h"
 #include "symtab.h"
+#include "ast.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -74,7 +75,9 @@ extern void yyerror(char *s);
     char char_value;
     float float_value;
     char* string_value;
+
     list_node* symtab_node;
+    ASTNode* ast_node;
 }
 
 %% 
