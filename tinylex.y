@@ -77,7 +77,7 @@ extern void yyerror(char *s);
     char* string_value;
 
     list_node* symtab_node;
-    ASTNode* ast_node;
+    ASTNode* ASTNode;
 }
 
 %% 
