@@ -36,7 +36,7 @@ typedef struct Param {
 
 typedef struct RefList {
     int line_num;
-    RefList *next;
+    struct RefList *next;
     Type type;
 } RefList;
 

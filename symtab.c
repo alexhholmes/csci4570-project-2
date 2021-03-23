@@ -2,6 +2,8 @@
 #include "symtab.h"
 
 #include <stdlib.h>
+#include <assert.h>
+#include <string.h>
 #include <stdbool.h>
 
 /*
@@ -14,7 +16,7 @@ void init_symbol_table() {
     ONCE = true;
 
     // Initialize symbol table with null values
-    symbol_table = (ListNode*) malloc(SIZE * sizeof(ListNode*));
+    symbol_table = malloc(SIZE * sizeof(ListNode*));
     for (int i = 0; i < SIZE; i++) {
         symbol_table[i] = NULL;
     }
@@ -59,7 +61,7 @@ ListNode *traverse_list_scoped(ListNode *start_node, char *name, unsigned int sc
 void insert(char *name, int len, Type type, int line_num) {
     unsigned int hash_value = hash(name);
     ListNode *ln = symbol_table[hash_value];
-    ln = traverse_ListNodes(ln, name);
+    ln = traverse_list(ln, name);
 
     if (ln == NULL) {
         // Not found in table, create new node
@@ -109,7 +111,18 @@ ListNode *lookup_scope(char *name, int scope) {
 * Hides symbols of the current scope.
 */
 void hide_scope() {
-    if(curr_scope > 0) curr_scope -= 1;
+    ListNode *ln;
+    for (int i = 0; i < SIZE; i++) {
+        if (symbol_table[i] != NULL) {
+            ln = symbol_table[i];
+            // TODO Do I need to free or can symbols still be reffed by syntax analyser
+            while(ln != NULL && ln->scope == curr_scope) {
+                ln = ln->next;
+            }
+            symbol_table[i] = ln;
+        }
+    }
+    curr_scope -= 1;
 }
 
 /*

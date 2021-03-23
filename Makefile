@@ -8,7 +8,7 @@ BFLAG = -vtd
 all: parser
 
 parser: lex bison
-	$(CC) $(CFLAG) lex.yy.c tinylex.tab.c -o parser
+	$(CC) $(CFLAG) lex.yy.c tinylex.tab.c symtab.c -o parser
 
 lex: tinyc.l
 	$(L) $(LFLAG) tinyc.l

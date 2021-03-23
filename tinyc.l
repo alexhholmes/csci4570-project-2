@@ -1,6 +1,10 @@
 %{
 #include "tinylex.tab.h"
+#include "symtab.h"
+
 #include <math.h>
+
+extern FILE *yyin
 
 int num_line = 1;
 %}
@@ -32,14 +36,12 @@ STRING \"(\\.|[^"\\])*\"
 "{"                     { return(LTBRACE); }
 "}"                     { return(RTBRACE); }
 
-
 "+"                     { return(PLUS); }
 "-"                     { return(MINUS); }
 "*"                     { return(MULTIPLY); }
 "/"                     { return(DIVIDE); }
 
 "="                     { return(ASSIGNMENT); }
-
 "=="                    { return(EQUAL); }
 "!="                    { return(NOT_EQUAL); }
 ">"                     { return(GT); }
@@ -48,27 +50,30 @@ STRING \"(\\.|[^"\\])*\"
 "<="                    { return(LTE); }
 
 "&"                     { return(PTR); }
-
+","                     { return(COMMA); }
 ";"                     { return(SEMICOLON); }
 
-","                     { return(COMMA); }
-
-{IDENTIFIER}            { yylval.charArray = strdup(yytext);
+{IDENTIFIER}            { if (strlen(yytext) > MAX) yyerror("Identifier exceeds maximum length (50 characters)");
+                          insert(yytext, strlen(yytext), UNDEF, num_line);
+                          yylval.symtab_item = lookup(yytext);
                           return(IDENTIFIER); }
 
-{CHAR}                  { yylval.charValue = yytext[1];
+{CHAR}                  { yylval.char_value = yytext[1];
                           return(CHAR_CONST); }
 
-{INTEGER}               { yylval.intValue = atoi(yytext);                               
+{INTEGER}               { yylval.int_value = atoi(yytext);                               
                           return(INT_CONST); }
 
-{FLOAT}                 { yylval.floatValue = atof(yytext);                                
+{FLOAT}                 { yylval.float_value = atof(yytext);                                
                           return(FLOAT_CONST); }
 
-{STRING}                { yylval.stringValue = yytext;
+{STRING}                { yylval.string_value = strdup(yytext);
                           return (STRING_CONST); }
 
-[ \t]                   /* skip whitespace */
-[\n\r]                  { num_line++; }
+[ \t\r\f]+              /* skip whitespace */
+
+"\n"                    { num_line += 1; }
+
+.                       { yyerror("Unrecognized character"); }
 
 %%
