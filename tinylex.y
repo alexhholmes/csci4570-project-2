@@ -6,14 +6,16 @@
 #include <stdio.h>
 
 extern FILE *yyin
-xtern int yylex();
+extern int yylex();
 extern void yyerror(char *s);
 %}
+
+%token MAIN /* TODO */
 
 /* Keywords */   
 %token <int_value> IF 
 %token <int_value> ELSE
-%token <int_value> WHILE   
+%token <int_value> WHILE
 %token <int_value> CHAR
 %token <int_value> INT
 %token <int_value> FLOAT
@@ -145,7 +147,7 @@ if_st: IF LTPAR exp RTPAR st %prec NO_ELSE
   | IF LTPAR exp RTPAR st ELSE st
   ;
 
-while_st: { incr_scope(); } WHILE LTPAR exp RTPAR st { hide_scope(); }
+while_st: WHILE LTPAR exp RTPAR st
     ;
 
 ret_st: RETURN SEMICOLON
@@ -166,13 +168,12 @@ st: assign_st
     | if_st
     | while_st
     | ret_st
-    | { incr_scope(); } block_st { hide_scope(); }
+    | block_st
     | empty_st
     | func_call SEMICOLON
     ;
 
 /* functions */
-
 return_type: VOID
     | type 
     ;
@@ -198,8 +199,8 @@ func_stlist: ret_st
 func_body: var_deflist func_stlist
     ;
 
-func_def: { incr_scope(); } return_type IDENTIFIER LTPAR func_paramlist RTPAR LTBRACE func_body RTBRACE { hide_scope(); }
-    | { incr_scope(); } return_type IDENTIFIER LTPAR VOID RTPAR LTBRACE func_body RTBRACE { hide_scope(); }
+func_def: return_type IDENTIFIER LTPAR func_paramlist RTPAR LTBRACE func_body RTBRACE
+    | return_type IDENTIFIER LTPAR VOID RTPAR LTBRACE func_body RTBRACE
     ;
 
 /* programs */

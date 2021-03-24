@@ -1,74 +1,46 @@
 #ifndef symtab
 #define symtab
 
-#define MAX_TOKEN_LENGTH 50
+#include <stdlib.h>
 
-/* Max symbol table size */
-#define SIZE 512
+#define MAX_IDENTIFIER_LENGTH 48
 
-/* Token types */
-#define UNDEF 0
-#define INT_TYPE 1
-#define REAL_TYPE 2
-#define STRING_TYPE 3
-#define LOGIC_TYPE 4
-#define FUNCTION_TYPE 5
+static Symbol *sym_table = NULL;
+static scope_t curr_scope = 0;
 
-/* Function parameter passing type */
-#define BY_VALUE 1
-#define BY_REFER 2
 
-typedef int Type;
-typedef int ParamType;
+typedef unsigned int scope_t;
 
-/* Current scope */
-unsigned int curr_scope = 0;
+typedef enum SymbolType {
+    INT,
+    FLOAT,
+    CHAR,
+    STR,
+    FUNC,
+} SymbolType;
 
-/* Function parameter struct */
-typedef struct Param {
-    Type token_type;
-    ParamType param_type;
-    char param_name[MAX_TOKEN_LENGTH];
-    int int_value;
-    float float_value;
-    char *str_value;
-} Param;
-
-typedef struct RefList {
+typedef struct Symbol {
+    char *name;
+    SymbolType type;
+    scope_t scope;
     int line_num;
-    struct RefList *next;
-    Type type;
-} RefList;
+    bool declared;
+    union value {
+        int int_val;
+        float float_val;
+        char char_val;
+        char *str_val;
+    } value;
 
-typedef struct ListNode {
-    char st_name[MAX_TOKEN_LENGTH];
-    int st_size;
-    int scope;
-    RefList *lines;
+    Symbol *next;
+} Symbol;
 
-    int st_int_value;
-    int st_float_value;
-    char *st_string_value;
-
-    Type st_type;
-    
-    Param *parameters;
-    int num_of_params;
-
-    struct ListNode *next;
-} ListNode;
-
-static ListNode **symbol_table;
-
-/* Function Declarations */
-void init_symbol_table();
-unsigned int hash(char *key);
-ListNode *traverse_list(ListNode *start_node, char *name);
-ListNode *traverse_list_scoped(ListNode *start_node, char *name, unsigned int scope);
-void insert(char *name, int len, int type, int line_num);
-ListNode *lookup(char *name);
-ListNode *lookup_scope(char *name, int scope);
+Symbol *append_sym(char *name, bool declared, SymbolType type, int line_num);
+void append_sym_unchecked(char *name, bool declared, SymbolType type, int line_num);
+Symbol *lookup_sym(char *name);
+Symbol *lookup_sym_scoped(char* name, scope_t scope);
+bool *is_sym_declared_scoped(char *name, scope_t scope);
+void inc_scope();
 void hide_scope();
-void incr_scope();
 
 #endif

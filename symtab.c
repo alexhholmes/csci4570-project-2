@@ -1,133 +1,100 @@
+#include "symtab.h" 
 
-#include "symtab.h"
-
-#include <stdlib.h>
-#include <assert.h>
 #include <string.h>
+#include <stdlib.h>
 #include <stdbool.h>
 
 /*
-* Initializes the symbol table.
-*/
-void init_symbol_table() {
-    // Asserts that function is only called once
-    static bool ONCE = false;
-    assert(!ONCE);
-    ONCE = true;
-
-    // Initialize symbol table with null values
-    symbol_table = malloc(SIZE * sizeof(ListNode*));
-    for (int i = 0; i < SIZE; i++) {
-        symbol_table[i] = NULL;
-    }
-}
-
-/*
-* Returns a hash of the specified key.
-*/
-unsigned int hash(char *key) {
-    // TODO Original implementation
-    unsigned int hash_value = 0;
-    while (*key != '\0') {
-        hash_value += *key;
-        key += 1;
-    }
-    hash_value += key[0] % 11 + (key[0] << 3) - key[0];
-    return hash_value % SIZE;
-}
-
-ListNode *traverse_list(ListNode *start_node, char *name) {
-    ListNode *ln = start_node;
-    while ((ln != NULL) && (strcmp(name, ln->st_name) != 0)) {
-        ln = ln->next;
-    }
-    return ln;
-}
-
-ListNode *traverse_list_scoped(ListNode *start_node, char *name, unsigned int scope) {
-    ListNode *ln = start_node;
-    while ((ln != NULL)
-        && (strcmp(name, ln->st_name) != 0)
-        && (scope != ln->scope))
-    {
-        ln = ln->next;
-    }
-    return ln;
-}
-
-/*
-* Inserts a new identifier into the symbol table.
-*/
-void insert(char *name, int len, Type type, int line_num) {
-    unsigned int hash_value = hash(name);
-    ListNode *ln = symbol_table[hash_value];
-    ln = traverse_list(ln, name);
-
-    if (ln == NULL) {
-        // Not found in table, create new node
-        ln = (ListNode*) malloc(sizeof(ListNode));
-
-        // Add to symbol table
-        ln->st_type = type;
-        ln->scope = curr_scope;
-        ln->lines = (RefList*) malloc(sizeof(RefList));
-        ln->lines->line_num = line_num;
-        ln->lines->next = NULL;
-        ln->next = NULL;
-        symbol_table[hash_value] = ln;
+ * Appends a new symbol to the front of the symbol table.
+ * Checks if variable has already been declared in the scope.
+ */
+Symbol *append_sym(char *name, bool declared, SymbolType type, int line_num) {
+    if (declared) {
+        // Declared symbol must check if it's already been declared
+        // in the current scope.
+        if (!is_sym_declared_scoped(name, scope)) {
+            append_sym_unchecked(name, declared, type, line_num);
+            return sym_table;
+        }
     } else {
-        // Found in table, add line number
-        ln->scope = curr_scope;
-        RefList *rl = ln->lines;
-        while (rl->next != NULL) rl = rl->next;
-
-        rl->next = (RefList*) malloc(sizeof(RefList));
-        rl->next->line_num = line_num;
-        rl->next->next = NULL;
-    }
-}
-
-/*
-* Returns symbol if found or NULL if not found.
-*/
-ListNode *lookup(char *name) {
-    unsigned int hash_val = hash(name);
-    ListNode *ln = symbol_table[hash_val];
-    traverse_list(ln, name);
-    return ln;
-}
-
-/*
-* Returns symbol in specified scope if found or NULL if not found.
-*/
-ListNode *lookup_scope(char *name, int scope) {
-    unsigned int hash_val = hash(name);
-    ListNode *ln = symbol_table[hash_val];
-    ln = traverse_list_scoped(ln, name, scope);
-    return ln;
-}
-
-/*
-* Hides symbols of the current scope.
-*/
-void hide_scope() {
-    ListNode *ln;
-    for (int i = 0; i < SIZE; i++) {
-        if (symbol_table[i] != NULL) {
-            ln = symbol_table[i];
-            // TODO Do I need to free or can symbols still be reffed by syntax analyser
-            while(ln != NULL && ln->scope == curr_scope) {
-                ln = ln->next;
-            }
-            symbol_table[i] = ln;
+        // Undeclared symbol must check if symbol already exists in
+        // the symbol table.
+        if (lookup_sym(name) != NULL) {
+            append_sym_unchecked(name, declared, type, line_num);
         }
     }
-    curr_scope -= 1;
+    // Returns null if unable to add to symbol table
+    return NULL;
+}
+
+void append_sym_unchecked(char *name, bool declared, SymbolType type, int line_num) {
+    Symbol *new_sym = (Symbol *) malloc(sizeof(Symbol));
+    new_sym->name = name;
+    new_sym->type = type;
+    new_sym->scope = curr_scope;
+    new_sym->line_num = line_num;
+    new_sym->declared = declared;
+    new_sym->next = sym_table;
+
+    sym_table = new_sym;
 }
 
 /*
-* Increments the scope by one.
-*/
-void incr_scope() {
+ * Returns a reference to the symbol of the given name, NULL if
+ * symbol does not exist. This returns the most locally scoped
+ * symbol.
+ */
+Symbol *lookup_sym(char *name) {
+    Symbol *sym = sym_table;
+    while (sym != NULL) {
+        if (strcmp(sym->name, name)) == 0) {
+            return sym;
+        }
+        sym = sym->next;
+    }
+    return NULL;
+}
+
+/*
+ * Returns a reference to the symbol of the given name and scope,
+ * NULL if symbol does not exist.
+ */
+Symbol *lookup_sym_scoped(char *name, scope_t scope) {
+    Symbol *sym = sym_table;
+    while (sym != NULL) {
+        if (sym->scope == scope && strcmp(sym->name, name) == 0) {
+            return sym;
+        }
+        sym = sym->next;
+    }
+    return NULL;
+}
+
+/*
+ * Returns true if symbol has been declared in the current scope.
+ */
+bool *is_sym_declared_scoped(char *name, scope_t scope) {
+    Symbol *sym = sym_table;
+    while (sym != NULL) {
+        if (sym->scope == scope
+            && sym->declared == true;
+            && strcmp(sym->name, name) == 0)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void inc_scope() {
     curr_scope += 1;
+}
+
+/*
+ * Removes all elements of the current scope from the symbol table.
+ */
+void hide_scope() {
+    while (sym_table != NULL && sym_table->scope == curr_scope) {
+        sym_table = sym->next;
+    }
 }

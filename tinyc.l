@@ -6,7 +6,7 @@
 
 extern FILE *yyin
 
-int num_line = 1;
+int line_num = 1;
 %}
 
 DIGIT   [0-9]
