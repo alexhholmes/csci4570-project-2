@@ -72,10 +72,9 @@ extern void yyerror(char *s);
 
 
 %union {
-    int int_value;
-    char char_value;
-    float float_value;
-    char* string_value;
+    Value val;
+    // TODO node 
+    
     list_node* symtab_node;
 }
 

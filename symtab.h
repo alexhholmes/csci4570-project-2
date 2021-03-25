@@ -19,6 +19,7 @@ typedef enum SymbolType {
     STR,
     FUNC,
 } SymbolType;
+
 typedef enum ReturnType {
     UNKNOWN,
     VOID,
