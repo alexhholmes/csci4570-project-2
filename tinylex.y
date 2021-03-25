@@ -71,6 +71,8 @@ extern void yyerror(char *err_message);
 %nonassoc ELSE
 
 %type <node> program
+%type <ConstType> constant
+%type <SymbolType> type
 // TODO Whatever the fuck this is
 
 %union {
@@ -91,15 +93,15 @@ primary_exp: constant
     | LTPAR exp RTPAR
     ;
 
-constant: INT_CONST
-    | FLOAT_CONST
-    | STRING_CONST
-    | CHAR_CONST
+constant: INT_CONST { $$ = new_const_node(INT_CONST, $1); }
+    | FLOAT_CONST { $$ = new_const_node(FLOAT_CONST, $1); }
+    | STRING_CONST { $$ = new_const_node(STRING_CONST, $1); }
+    | CHAR_CONST { $$ = new_const_node(CHAR_CONST, $1); }
     ;
 
-type: INT
-    | FLOAT
-    | CHAR
+type: INT { $$ = INT_TYPE; }
+    | FLOAT { $$ = FLOAT_TYPE; }
+    | CHAR { $$ = CHAR_TYPE; }
     ;
 
 func_arglist: PTR IDENTIFIER
