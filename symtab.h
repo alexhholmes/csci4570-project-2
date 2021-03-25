@@ -18,6 +18,13 @@ typedef enum SymbolType {
     STR,
     FUNC,
 } SymbolType;
+typedef enum ReturnType {
+    UNKNOWN,
+    VOID,
+    INT,
+    FLOAT,
+    CHAR,
+} ReturnType;
 
 typedef struct Symbol {
     char *name;
@@ -32,11 +39,14 @@ typedef struct Symbol {
         char *str_val;
     } value;
 
+    // For function symbols
+    ReturnType func_type;
+
     Symbol *next;
 } Symbol;
 
-Symbol *append_sym(char *name, bool declared, SymbolType type, int line_num);
-void append_sym_unchecked(char *name, bool declared, SymbolType type, int line_num);
+Symbol *append_sym(char *name, bool declared, SymbolType type, ReturnType ret_type, int line_num);
+void append_sym_unchecked(char *name, bool declared, SymbolType type, ReturnType ret_type, int line_num);
 Symbol *lookup_sym(char *name);
 Symbol *lookup_sym_scoped(char* name, scope_t scope);
 bool *is_sym_declared_scoped(char *name, scope_t scope);
