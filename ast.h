@@ -148,9 +148,17 @@ typedef struct ASTReturnNode {
 
 // TODO NODE MANAGEMENT
 
-
-
-
-
+ASTNode *new_ast_node(NodeType type, ASTNode *left, ASTNode *right);
+ASTNode *new_const_node(ConstType const_type, Value val);
+ASTNode *new_if_node(ASTNode *condition, ASTNode *if_branch, ASTNode *else_branch);
+ASTNode *new_while_node(ASTNode *condition, ASTNode *while_branch);
+ASTNode *new_assign_node(Symbol *entry, ASTNode *assign_val);
+ASTNode *new_mainrt_node();
+ASTNode *new_funccall_node(Symbol *entry, ASTNode *params, int num_of_params);
+ASTNode *new_arith_node(ArithOp op, ASTNode *left, ASTNode *right);
+ASTNode *new_rel_node(ArithOp op, ASTNode *left, ASTNode *right);
+ASTNode *new_equal_node(ArithOp op, ASTNode *left, ASTNode *right);
+ASTNode *new_funcdecl_node(int ret_type, Symbol *entry);
+ASTNode *new_return_node(int ret_type, ASTNode *ret_val);
 
 #endif
