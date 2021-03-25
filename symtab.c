@@ -13,7 +13,7 @@ Symbol *append_sym(char *name, bool declared, SymbolType type, ReturnType ret_ty
     if (declared) {
         // Declared symbol must check if it's already been declared
         // in the current scope.
-        if (!is_sym_declared_scoped(name, scope)) {
+        if (!is_sym_declared_scoped(name, curr_scope)) {
             append_sym_unchecked(name, declared, type, ret_type, line_num);
             return sym_table;
         }
@@ -49,7 +49,7 @@ void append_sym_unchecked(char *name, bool declared, SymbolType type, ReturnType
 Symbol *lookup_sym(char *name) {
     Symbol *sym = sym_table;
     while (sym != NULL) {
-        if (strcmp(sym->name, name)) == 0) {
+        if (strcmp(sym->name, name) == 0) {
             return sym;
         }
         sym = sym->next;
@@ -79,7 +79,7 @@ bool *is_sym_declared_scoped(char *name, scope_t scope) {
     Symbol *sym = sym_table;
     while (sym != NULL) {
         if (sym->scope == scope
-            && sym->declared == true;
+            && sym->declared == true
             && strcmp(sym->name, name) == 0)
         {
             return true;
@@ -97,6 +97,6 @@ void inc_scope() {
  */
 void hide_scope() {
     while (sym_table != NULL && sym_table->scope == curr_scope) {
-        sym_table = sym->next;
+        sym_table = sym_table->next;
     }
 }
