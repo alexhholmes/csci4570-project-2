@@ -28,10 +28,10 @@ typedef enum NodeType {
 } NodeType;
 
 typedef enum ConstType {
-    INT, 
-    FLOAT, 
-    CHAR, 
-    STRING
+    INT_CONSTTYPE, 
+    FLOAT_CONSTTYPE, 
+    CHAR_CONSTTYPE, 
+    STRING_CONSTTYPE
 } ConstType;
 
 typedef enum ArithOp{

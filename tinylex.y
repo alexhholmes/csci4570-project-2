@@ -53,10 +53,10 @@ extern void yyerror(char *err_message);
 %token <int_value> PTR     /* & */
 
 %token <symtab_node>    IDENTIFIER
-%token <char_value>	    CHAR_CONST
-%token <int_value>      INT_CONST
-%token <float_value>    FLOAT_CONST
-%token <string_value>   STRING_CONST
+%token <val>	        CHAR_CONST
+%token <val>            INT_CONST
+%token <val>            FLOAT_CONST
+%token <val>            STRING_CONST
 
 
 %left LTPAR RTPAR
@@ -77,13 +77,9 @@ extern void yyerror(char *err_message);
 // TODO Whatever the fuck this is
 
 %union {
-    int int_value;
-    char char_value;
-    float float_value;
-    char *string_value;
-    
     Symbol *symtab_node;
     ASTNode *node;
+    Value val;
 }
 
 %% 
@@ -119,10 +115,10 @@ primary_exp: constant
     | LTPAR exp RTPAR
     ;
 
-constant: INT_CONST { $$ = new_const_node(INT_CONST, $1); }
-    | FLOAT_CONST { $$ = new_const_node(FLOAT_CONST, $1); }
-    | STRING_CONST { $$ = new_const_node(STRING_CONST, $1); }
-    | CHAR_CONST { $$ = new_const_node(CHAR_CONST, $1); }
+constant: INT_CONST { $$ = new_const_node(INT_CONSTTYPE, $1); }
+    | FLOAT_CONST { $$ = new_const_node(FLOAT_CONSTTYPE, $1); }
+    | STRING_CONST { $$ = new_const_node(STRING_CONSTTYPE, $1); }
+    | CHAR_CONST { $$ = new_const_node(CHAR_CONSTTYPE, $1); }
     ;
 
 type: INT { $$ = INT_TYPE; }
@@ -199,13 +195,13 @@ block_st: LTBRACE st_list RTBRACE
 empty_st: SEMICOLON
     ;
 
-st: assign_st
-    | if_st
-    | while_st
-    | ret_st
-    | block_st
-    | empty_st
-    | func_call SEMICOLON
+st: assign_st { $$ = $1; }
+    | if_st { $$ = $1; }
+    | while_st { $$ = $1; }
+    | ret_st { $$ = $1; }
+    | block_st { $$ = $1; }
+    | empty_st { $$ = $1; }
+    | func_call SEMICOLON { $$ = $1; }
     ;
 
 /* functions */
