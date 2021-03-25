@@ -53,17 +53,16 @@ typedef enum EqualOp{
 	NOT_EQ // != operator
 } EqualOp;
 
-/* Types of values that we can have in constants */
-typedef union Value{
+typedef union Value {
 	int int_value;
-    char char_value;
-    float float_value;
-    char* string_value;
-} Value;
+	char char_value;
+	float float_value;
+	char *string_value;
+}
 
 // Nodes
 
-// normal node, no frills
+// Normal node
 typedef struct ASTNode {
 	NodeType type; // node type
 	ASTNode *left;  // left child

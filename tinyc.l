@@ -53,19 +53,19 @@ STRING \"(\\.|[^"\\])*\"
 ","                     { return(COMMA); }
 ";"                     { return(SEMICOLON); }
 
-{IDENTIFIER}            { yylval.string_value;
+{IDENTIFIER}            { yylval.val.string_value;
                           return(IDENTIFIER); }
 
-{CHAR}                  { yylval.char_value = yytext[1];
+{CHAR}                  { yylval.val.char_value = yytext[1];
                           return(CHAR_CONST); }
 
-{INTEGER}               { yylval.int_value = atoi(yytext);                               
+{INTEGER}               { yylval.val.int_value = atoi(yytext);                               
                           return(INT_CONST); }
 
-{FLOAT}                 { yylval.float_value = atof(yytext);                                
+{FLOAT}                 { yylval.val.float_value = atof(yytext);                                
                           return(FLOAT_CONST); }
 
-{STRING}                { yylval.string_value = strdup(yytext);
+{STRING}                { yylval.val.string_value = strdup(yytext);
                           return (STRING_CONST); }
 
 [ \t\r\f]+              /* skip whitespace */
