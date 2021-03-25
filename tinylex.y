@@ -146,43 +146,79 @@ type: INT { $$ = INT_TYPE; }
     ;
 
 func_arglist: PTR identifier
-    | exp
+    | exp { $$ = $1; }
     | exp COMMA func_arglist
     | PTR identifier COMMA func_arglist
     ;
 
-func_call_args: RTPAR
-    | func_arglist RTPAR
+func_call_args: RTPAR { $$ = NULL; }
+    | func_arglist RTPAR { $$ = $1; }
     ;
 
 func_call: identifier LTPAR func_call_args
     ;
 
-unary_exp: primary_exp 
-    | PLUS unary_exp
+unary_exp: primary_exp { $$ = $1; }
+    | PLUS unary_exp 
+        {
+            
+        }
     | MINUS unary_exp
+        {
+           
+        }
     ;
 
-mult_exp: unary_exp
+mult_exp: unary_exp { $$ = $1; }
     | mult_exp MULTIPLY unary_exp
+        {
+            $$ = new_arith_node($2.int_value, $1, $3);
+        }
     | mult_exp DIVIDE unary_exp
+        {
+            $$ = new_arith_node($2.int_value, $1, $3);
+        }
     ;
 
-add_exp: mult_exp
+add_exp: mult_exp { $$ = $1; }
     | add_exp PLUS add_exp
+        {
+            $$ = new_arith_node($2.int_value, $1, $3);
+        }
     | add_exp MINUS add_exp
+        {
+            $$ = new_arith_node($2.int_value, $1, $3);
+        }
     ;
 
-comp_exp: add_exp
+comp_exp: add_exp { $$ = $1; }
     | add_exp LT add_exp
+        {
+            $$ = new_rel_node($2.int_value, $1, $3);
+        }
     | add_exp LTE add_exp
+        {
+            $$ = new_rel_node($2.int_value, $1, $3);
+        }
     | add_exp GT add_exp
+        {
+            $$ = new_rel_node($2.int_value, $1, $3);
+        }
     | add_exp GTE add_exp
+        {
+            $$ = new_rel_node($2.int_value, $1, $3);
+        }
     ;
 
-exp: comp_exp
+exp: comp_exp { $$ = $1; }
     | comp_exp EQUAL comp_exp
+        {
+            $$ = new_equal_node($2.int_value, $1, $3);
+        }
     | comp_exp NOT_EQUAL comp_exp
+        {
+            $$ = new_equal_node($2.int_value, $1, $3);
+        }
     ;
 
 /* statements */
@@ -202,6 +238,9 @@ while_st: { inc_scope(); } WHILE LTPAR exp RTPAR st { hide_scope(); }
 
 ret_st: RETURN SEMICOLON
     | RETURN exp SEMICOLON
+        {
+            $$ = $2; 
+        }
     ;
 
 st_list: /* epsilon */ 

@@ -70,7 +70,7 @@ ASTNode *new_arith_node(ArithOp op, ASTNode *left, ASTNode *right) {
     return (ASTNode*) v;
 }
 
-ASTNode *new_rel_node(ArithOp op, ASTNode *left, ASTNode *right) {
+ASTNode *new_rel_node(RelOp op, ASTNode *left, ASTNode *right) {
     ASTRelNode *v = malloc (sizeof(ASTRelNode));
     v->type = REL_NODE; 
     v->op = op; 
@@ -79,7 +79,7 @@ ASTNode *new_rel_node(ArithOp op, ASTNode *left, ASTNode *right) {
     return (ASTNode*) v;
 }
 
-ASTNode *new_equal_node(ArithOp op, ASTNode *left, ASTNode *right) {
+ASTNode *new_equal_node(EqualOp op, ASTNode *left, ASTNode *right) {
     ASTEqualNode *v = malloc (sizeof(ASTEqualNode));
     v->type = EQUAL_NODE; 
     v->op = op; 
