@@ -143,11 +143,14 @@ exp: comp_exp
 assign_st: IDENTIFIER ASSIGNMENT exp SEMICOLON
     ;
 
-if_st: IF LTPAR exp RTPAR st %prec NO_ELSE
-  | IF LTPAR exp RTPAR st ELSE st
-  ;
+if_st: IF { inc_scope(); } LTPAR exp RTPAR st { hide_scope(); inc_scope(); } else { hide_scope(); }
+    ;
 
-while_st: WHILE LTPAR exp RTPAR st
+else: %prec NO_ELSE
+    | ELSE st
+    ;
+
+while_st: { inc_scope(); } WHILE LTPAR exp RTPAR st { hide_scope(); }
     ;
 
 ret_st: RETURN SEMICOLON
@@ -199,17 +202,17 @@ func_stlist: ret_st
 func_body: var_deflist func_stlist
     ;
 
-func_def: return_type IDENTIFIER LTPAR func_paramlist RTPAR LTBRACE func_body RTBRACE
-    | return_type IDENTIFIER LTPAR VOID RTPAR LTBRACE func_body RTBRACE
+func_def: return_type IDENTIFIER LTPAR { inc_scope(); } func_paramlist RTPAR LTBRACE func_body RTBRACE { hide_scope(); }
+    | return_type IDENTIFIER LTPAR VOID { inc_scope(); } RTPAR LTBRACE func_body RTBRACE { hide_scope(); }
     ;
 
 /* programs */
 
 func_deflist: /* epsilon */
-    | func_deflist func_def 
+    | func_deflist func_def
     ;
 
-main: INT MAIN LTPAR VOID RTPAR LTBRACE func_body RTBRACE
+main: INT MAIN { inc_scope(); } LTPAR VOID RTPAR LTBRACE func_body RTBRACE { hide_scope(); }
     ;
 
 %%
