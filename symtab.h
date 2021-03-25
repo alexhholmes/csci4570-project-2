@@ -2,6 +2,7 @@
 #define symtab
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 #define MAX_IDENTIFIER_LENGTH 48
 
