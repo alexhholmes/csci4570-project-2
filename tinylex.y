@@ -1,6 +1,7 @@
 %{
 #include "tinylex.tab.h"
 #include "symtab.h"
+#include "ast.h"
 
 #include <stdlib.h>
 #include <stdio.h>

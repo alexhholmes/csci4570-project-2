@@ -58,7 +58,7 @@ typedef union Value {
 	char char_value;
 	float float_value;
 	char *string_value;
-}
+} Value;
 
 // Nodes
 
