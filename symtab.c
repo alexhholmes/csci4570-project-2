@@ -9,7 +9,7 @@
  * Appends a new symbol to the front of the symbol table.
  * Checks if variable has already been declared in the scope.
  */
-Symbol *append_sym(char *name, bool declared, SymbolType type, ReturnType ret_type, int line_num) {
+Symbol *append_sym(char *name, SymbolType type, ReturnType ret_type, int line_num) {
     if (declared) {
         // Declared symbol must check if it's already been declared
         // in the current scope.
@@ -28,7 +28,7 @@ Symbol *append_sym(char *name, bool declared, SymbolType type, ReturnType ret_ty
     return NULL;
 }
 
-void append_sym_unchecked(char *name, bool declared, SymbolType type, ReturnType ret_type, int line_num) {
+void append_sym_unchecked(char *name, SymbolType type, ReturnType ret_type, int line_num) {
     Symbol *new_sym = (Symbol *) malloc(sizeof(Symbol));
     new_sym->name = name;
     new_sym->type = type;
@@ -70,6 +70,11 @@ Symbol *lookup_sym_scoped(char *name, scope_t scope) {
         sym = sym->next;
     }
     return NULL;
+}
+
+SymbolType get_type(char *name) {
+    Symbol *sym = lookup_sym(name);
+    return sym->type;
 }
 
 /*

@@ -54,9 +54,11 @@ STRING \"(\\.|[^"\\])*\"
 ";"                     { return(SEMICOLON); }
 
 {IDENTIFIER}            { if (strlen(yytext) > MAX) yyerror("Identifier exceeds maximum length (50 characters)");
-                          insert(yytext, strlen(yytext), UNDEF, num_line); 
+                          if (insert(yytext, strlen(yytext), UNDEF, num_line)) {
+                              yyerror("")
+                          }
                           yylval.symtab_item = lookup(yytext);
-                          return(IDENTIFIER); } /* TODO line 57 change function call */
+                          return(IDENTIFIER); }
 
 {CHAR}                  { yylval.val.char_value = yytext[1];
                           return(CHAR_CONST); }

@@ -7,7 +7,7 @@
 
 extern FILE *yyin
 extern int yylex();
-extern void yyerror(char *s);
+extern void yyerror(char *err_message);
 %}
 
 %token MAIN /* TODO */
@@ -70,12 +70,14 @@ extern void yyerror(char *s);
 %nonassoc NO_ELSE
 %nonassoc ELSE
 
+%type <node> program
+// TODO Whatever the fuck this is
 
 %union {
     Value val;
-    // TODO node 
     
-    list_node* symtab_node;
+    list_node *symtab_node;
+    ASTNode *node;
 }
 
 %% 
@@ -187,7 +189,7 @@ func_paramlist: func_param
     | func_param COMMA func_paramlist
     ;
 
-var_def: type IDENTIFIER ASSIGNMENT constant SEMICOLON
+var_def: { declared = true; } type { declared = false } IDENTIFIER ASSIGNMENT constant SEMICOLON
     ;
 
 var_deflist: /* epsilon */
@@ -201,8 +203,8 @@ func_stlist: ret_st
 func_body: var_deflist func_stlist
     ;
 
-func_def: return_type IDENTIFIER LTPAR { inc_scope(); } func_paramlist RTPAR LTBRACE func_body RTBRACE { hide_scope(); }
-    | return_type IDENTIFIER LTPAR VOID { inc_scope(); } RTPAR LTBRACE func_body RTBRACE { hide_scope(); }
+func_def: { declared = true } return_type IDENTIFIER LTPAR { declared = false; inc_scope(); } func_paramlist RTPAR LTBRACE func_body RTBRACE { hide_scope(); }
+    | { declared = true } return_type IDENTIFIER LTPAR VOID { declared = false; inc_scope(); } RTPAR LTBRACE func_body RTBRACE { hide_scope(); }
     ;
 
 /* programs */

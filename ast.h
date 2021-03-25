@@ -18,12 +18,11 @@ typedef enum NodeType {
 	FUNC_CALL,   // function call
 
 	// expressions
-
 	ARITH_NODE, // arithmetic expression
 	REL_NODE,    // relational expression
 	EQUAL_NODE,    // equality expression
-	// functions
 
+	// functions
 	FUNC_DECL,   // function declaration
 	RETURN_NODE, // return statement of functions
 } NodeType;
