@@ -27,13 +27,6 @@ typedef enum NodeType {
 	RETURN_NODE, // return statement of functions
 } NodeType;
 
-typedef enum ConstType {
-    INT_CONSTTYPE, 
-    FLOAT_CONSTTYPE, 
-    CHAR_CONSTTYPE, 
-    STRING_CONSTTYPE
-} ConstType;
-
 typedef enum ArithOp{
 	ADD,  // + operator
 	SUB,  // - operator
@@ -73,7 +66,7 @@ typedef struct ASTNode {
 
 typedef struct ASTConstNode {
 	NodeType type; // node type
-	ConstType const_type; // data type
+	int const_type; // data type
 	Value val; // constant value
 } ASTConstNode;
 
@@ -148,7 +141,7 @@ typedef struct ASTReturnNode {
 // TODO NODE MANAGEMENT
 
 ASTNode *new_ast_node(NodeType type, ASTNode *left, ASTNode *right);
-ASTNode *new_const_node(ConstType const_type, Value val);
+ASTNode *new_const_node(int const_type, Value val);
 ASTNode *new_if_node(ASTNode *condition, ASTNode *if_branch, ASTNode *else_branch);
 ASTNode *new_while_node(ASTNode *condition, ASTNode *while_branch);
 ASTNode *new_assign_node(Symbol *entry, ASTNode *assign_val);

@@ -13,7 +13,7 @@ ASTNode *new_ast_node(NodeType type, ASTNode *left, ASTNode *right) {
 	return v;
 }
 
-ASTNode *new_const_node(ConstType const_type, Value val) {
+ASTNode *new_const_node(int const_type, Value val) {
     ASTConstNode *v = malloc (sizeof(ASTConstNode));
     v->type = CONST_NODE; 
     v->const_type = const_type;

@@ -72,14 +72,18 @@ extern void yyerror(char *err_message);
 %nonassoc ELSE
 
 %type <node> program
-%type <ConstType> constant
-%type <SymbolType> type
+%type <const_type> constant
+%type <data_type> type
 // TODO Whatever the fuck this is
 
 %union {
+    Value val;
+
     Symbol *symtab_node;
     ASTNode *node;
-    Value val;
+
+    int data_type;
+    int const_type;
 }
 
 %% 

@@ -70,7 +70,7 @@ Symbol *lookup_sym_scoped(char *name, scope_t scope) {
     return NULL;
 }
 
-SymbolType get_type(char *name) {
+int get_type(char *name) {
     Symbol *sym = lookup_sym(name);
     return sym->type;
 }

@@ -4,30 +4,21 @@
 #include "ast.h"
 #include "symtab.h"
 
-typedef enum SymbolType {
-    UNDEF_TYPE,
-    INT_TYPE,
-    FLOAT_TYPE,
-    CHAR_TYPE,
-    STR_TYPE,
-    FUNC_TYPE,
-} SymbolType;
+// Token Types
+#define UNDEF 0
+#define INT_TYPE 1
+#define FLOAT_TYPE 2
+#define CHAR_TYPE 3 
+#define STRING_TYPE 4
+#define FUNCTION_TYPE 5
+#define VOID_TYPE 6
 
-typedef enum ReturnType {
-    UNKNOWN_RET,
-    VOID_RET,
-    INT_RET,
-    FLOAT_RET,
-    CHAR_RET,
-} ReturnType;
+// Operator Types
+#define NONE 0
+#define ARITH_OP 1
+#define REL_OP 2
+#define EQU_OP 3
 
-typedef enum OpType {
-    ARITH_OP,
-    REL_OP,
-    EQU_OP,
-} OpType;
-
-SymbolType get_result_type(SymbolType type1, SymbolType type2, OpType op_type);
-
+int get_result_type(int type1, int type2, int op_type);
 
 #endif

@@ -18,7 +18,7 @@ typedef unsigned int scope_t;
 
 typedef struct Symbol {
     char *name;
-    SymbolType type;
+    int type;
     scope_t scope;
     int line_num;
     bool declared;
@@ -30,16 +30,16 @@ typedef struct Symbol {
     } value;
 
     // For function symbols
-    ReturnType func_type;
+    int return_type;
 
     Symbol *next;
 } Symbol;
 
-Symbol *append_sym(char *name, SymbolType type, ReturnType ret_type, int line_num);
-void append_sym_unchecked(char *name, SymbolType type, ReturnType ret_type, int line_num);
+Symbol *append_sym(char *name, int line_num);
+void append_sym_unchecked(char *name, int line_num);
 Symbol *lookup_sym(char *name);
 Symbol *lookup_sym_scoped(char* name, scope_t scope);
-SymbolType get_type(char *name);
+int get_type(char *name);
 bool *is_sym_declared_scoped(char *name, scope_t scope);
 void inc_scope();
 void hide_scope();

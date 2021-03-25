@@ -4,7 +4,7 @@
 
 extern yyerror(char *err_message);
 
-SymbolType get_result_type(SymbolType type1, SymbolType type2, OpType op_type) {
+int get_result_type(int type1, int type2, int op_type) {
     switch (op_type) {
     case ARITH_OP:
         if (type1 == INT_TYPE) {
@@ -13,18 +13,18 @@ SymbolType get_result_type(SymbolType type1, SymbolType type2, OpType op_type) {
             } else if (type2 == FLOAT_TYPE) {
                 return FLOAT_TYPE;
             } else {
-                return UNDEF_TYPE;
+                return NONE;
             }
         } else if (type1 == FLOAT_TYPE) {
             if (type2 == INT_TYPE || type2 == CHAR_TYPE || type2 == FLOAT_TYPE) {
                 return FLOAT_TYPE;
             } else {
-                return UNDEF_TYPE;
+                return NONE;
             }
         } else if (type1 == CHAR_TYPE) {
 
         } else {
-            return UNDEF_TYPE;
+            return NONE;
         }
         break;
     case REL_OP:
@@ -32,22 +32,22 @@ SymbolType get_result_type(SymbolType type1, SymbolType type2, OpType op_type) {
             if (type2 == INT_TYPE || type2 == FLOAT_TYPE || type2 == CHAR_TYPE) {
                 return INT_TYPE;
             } else {
-                return UNDEF_TYPE;
+                return NONE;
             }
         } else if (type1 == FLOAT_TYPE) {
             if (type2 == INT_TYPE || type2 == FLOAT_TYPE || type2 == CHAR_TYPE) {
                 return INT_TYPE;
             } else {
-                return UNDEF_TYPE;
+                return NONE;
             }
         } else if (type1 == CHAR_TYPE) {
             if (type2 == INT_TYPE || type2 == FLOAT_TYPE || type2 == CHAR_TYPE) {
                 return INT_TYPE;
             } else {
-                return UNDEF_TYPE;
+                return NONE;
             }
         } else {
-            return UNDEF_TYPE;
+            return NONE;
         }
         break;
     case EQU_OP:
@@ -55,22 +55,22 @@ SymbolType get_result_type(SymbolType type1, SymbolType type2, OpType op_type) {
             if (type2 == INT_TYPE || type2 == CHAR_TYPE) {
                 return INT_TYPE;
             } else {
-                return UNDEF_TYPE;
+                return NONE;
             }
         } else if (type1 == FLOAT_TYPE) {
             if (type2 == FLOAT_TYPE) {
                 return INT_TYPE;
             } else {
-                return UNDEF_TYPE;
+                return NONE;
             }
         } else if (type1 == CHAR_TYPE) {
             if (type2 == INT_TYPE || type2 == CHAR_TYPE) {
                 return INT_TYPE;
             } else {
-                return UNDEF_TYPE;
+                return NONE;
             }
         } else {
-            return UNDEF_TYPE;
+            return NONE;
         }
         break;
     default:
