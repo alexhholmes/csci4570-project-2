@@ -2,6 +2,7 @@
 #include "tinylex.tab.h"
 #include "symtab.h"
 #include "ast.h"
+#include "semantic.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -14,49 +15,49 @@ extern void yyerror(char *err_message);
 %token MAIN /* TODO */
 
 /* Keywords */   
-%token <int_value> IF 
-%token <int_value> ELSE
-%token <int_value> WHILE
-%token <int_value> CHAR
-%token <int_value> INT
-%token <int_value> FLOAT
-%token <int_value> RETURN
-%token <int_value> VOID
+%token <val> IF 
+%token <val> ELSE
+%token <val> WHILE
+%token <val> CHAR
+%token <val> INT
+%token <val> FLOAT
+%token <val> RETURN
+%token <val> VOID
 
 /* Pairs of tokens */
-%token <int_value> LTPAR     /* ( */
-%token <int_value> RTPAR     /* ) */
-%token <int_value> LTBRACE   /* { */
-%token <int_value> RTBRACE   /* } */    
+%token <val> LTPAR     /* ( */
+%token <val> RTPAR     /* ) */
+%token <val> LTBRACE   /* { */
+%token <val> RTBRACE   /* } */    
 
 /* Basic separators */
-%token <int_value> SEMICOLON
-%token <int_value> COMMA
+%token <val> SEMICOLON
+%token <val> COMMA
 
 /* Math operators */
-%token <int_value> PLUS
-%token <int_value> MINUS
-%token <int_value> MULTIPLY
-%token <int_value> DIVIDE
+%token <val> PLUS
+%token <val> MINUS
+%token <val> MULTIPLY
+%token <val> DIVIDE
 
 /* Equality and difference */
-%token <int_value> ASSIGNMENT 	/* = */
-%token <int_value> EQUAL      	/* == */
-%token <int_value> NOT_EQUAL   	/* != */
+%token <val> ASSIGNMENT 	/* = */
+%token <val> EQUAL      	/* == */
+%token <val> NOT_EQUAL   	/* != */
 
 /* Logical operators */
-%token <int_value> GT  	   /* > */
-%token <int_value> LT      /* < */
-%token <int_value> GTE     /* >= */
-%token <int_value> LTE     /* <= */
+%token <val> GT  	   /* > */
+%token <val> LT      /* < */
+%token <val> GTE     /* >= */
+%token <val> LTE     /* <= */
 
-%token <int_value> PTR     /* & */
+%token <val> PTR     /* & */
 
-%token <symtab_node>    IDENTIFIER
-%token <val>	        CHAR_CONST
-%token <val>            INT_CONST
-%token <val>            FLOAT_CONST
-%token <val>            STRING_CONST
+%token <symtab_node> IDENTIFIER
+%token <val> CHAR_CONST
+%token <val> INT_CONST
+%token <val> FLOAT_CONST
+%token <val> STRING_CONST
 
 
 %left LTPAR RTPAR
@@ -72,9 +73,21 @@ extern void yyerror(char *err_message);
 %nonassoc ELSE
 
 %type <node> program
-%type <const_type> constant
+%type <symtab_node> identifier dec_identifier
+%type <node> constant
 %type <data_type> type
-// TODO Whatever the fuck this is
+%type <node> func_call func_call_args func_arglist
+%type <node> primary_exp exp comp_exp add_exp mult_exp unary_exp
+%type <node> assign_st
+%type <node> if_st else
+%type <node> while_st
+%type <node> ret_st;
+%type <node> st st_list block_st;
+%type <node> return_type
+%type <node> func_param func_paramlist
+%type <node> var_def var_deflist
+%type <node> func_def func_body func_stlist func_deflist
+%type <node> main
 
 %union {
     Value val;
@@ -100,6 +113,7 @@ dec_identifier: IDENTIFIER {
                 sprintf(buf, "Identifier %s is already declared in scope", $1);
                 yyerror(buf);
             }
+            $$ = $1;
         }
     ;
 
@@ -110,19 +124,20 @@ identifier: IDENTIFIER {
                 sprintf(buf, "Identifier %s is not declared", $1);
                 yyerror(buf);
             }
+            $$ = $1;
         }
     ;
 
-primary_exp: constant
-    | identifier
+primary_exp: constant   { $$ = $1; }
+    | identifier        { $$ = }
     | func_call
-    | LTPAR exp RTPAR
+    | LTPAR exp RTPAR   { $$ = $2 }
     ;
 
-constant: INT_CONST { $$ = new_const_node(INT_CONSTTYPE, $1); }
-    | FLOAT_CONST { $$ = new_const_node(FLOAT_CONSTTYPE, $1); }
-    | STRING_CONST { $$ = new_const_node(STRING_CONSTTYPE, $1); }
-    | CHAR_CONST { $$ = new_const_node(CHAR_CONSTTYPE, $1); }
+constant: INT_CONST { $$ = new_const_node(INT_TYPE, $1); }
+    | FLOAT_CONST { $$ = new_const_node(FLOAT_TYPE, $1); }
+    | STRING_CONST { $$ = new_const_node(STRING_TYPE, $1); }
+    | CHAR_CONST { $$ = new_const_node(CHAR_TYPE, $1); }
     ;
 
 type: INT { $$ = INT_TYPE; }
