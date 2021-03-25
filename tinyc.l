@@ -53,23 +53,19 @@ STRING \"(\\.|[^"\\])*\"
 ","                     { return(COMMA); }
 ";"                     { return(SEMICOLON); }
 
-{IDENTIFIER}            { if (strlen(yytext) > MAX) yyerror("Identifier exceeds maximum length (50 characters)");
-                          if (insert(yytext, strlen(yytext), UNDEF, num_line)) {
-                              yyerror("")
-                          }
-                          yylval.symtab_item = lookup(yytext);
+{IDENTIFIER}            { yylval.string_value;
                           return(IDENTIFIER); }
 
-{CHAR}                  { yylval.val.char_value = yytext[1];
+{CHAR}                  { yylval.char_value = yytext[1];
                           return(CHAR_CONST); }
 
-{INTEGER}               { yylval.val.int_value = atoi(yytext);                               
+{INTEGER}               { yylval.int_value = atoi(yytext);                               
                           return(INT_CONST); }
 
-{FLOAT}                 { yylval.val.float_value = atof(yytext);                                
+{FLOAT}                 { yylval.float_value = atof(yytext);                                
                           return(FLOAT_CONST); }
 
-{STRING}                { yylval.val.string_value = strdup(yytext);
+{STRING}                { yylval.string_value = strdup(yytext);
                           return (STRING_CONST); }
 
 [ \t\r\f]+              /* skip whitespace */

@@ -9,33 +9,31 @@
  * Appends a new symbol to the front of the symbol table.
  * Checks if variable has already been declared in the scope.
  */
-Symbol *append_sym(char *name, SymbolType type, ReturnType ret_type, int line_num) {
+Symbol *append_sym(char *name, int line_num) {
     if (declared) {
         // Declared symbol must check if it's already been declared
         // in the current scope.
         if (!is_sym_declared_scoped(name, curr_scope)) {
-            append_sym_unchecked(name, type, ret_type, line_num);
+            append_sym_unchecked(name, line_num);
             return sym_table;
         }
     } else {
         // Undeclared symbol must check if symbol already exists in
         // the symbol table (has been declared).
         if (lookup_sym(name) != NULL) {
-            append_sym_unchecked(name, type, ret_type, line_num);
+            append_sym_unchecked(name, line_num);
         }
     }
     // Returns null if unable to add to symbol table
     return NULL;
 }
 
-void append_sym_unchecked(char *name, SymbolType type, ReturnType ret_type, int line_num) {
+void append_sym_unchecked(char *name, int line_num) {
     Symbol *new_sym = (Symbol *) malloc(sizeof(Symbol));
     new_sym->name = name;
-    new_sym->type = type;
     new_sym->scope = curr_scope;
     new_sym->line_num = line_num;
     new_sym->declared = declared;
-    new_sym->func_type = ret_type;
     new_sym->next = sym_table;
 
     sym_table = new_sym;

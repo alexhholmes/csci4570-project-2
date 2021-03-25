@@ -76,9 +76,12 @@ extern void yyerror(char *err_message);
 // TODO Whatever the fuck this is
 
 %union {
-    Value val;
+    int int_value;
+    char char_value;
+    float float_value;
+    char *string_value;
     
-    list_node *symtab_node;
+    Symbol *symtab_node;
     ASTNode *node;
 }
 
@@ -87,8 +90,30 @@ extern void yyerror(char *err_message);
 program: func_deflist main func_deflist
     ;
 
+dec_identifier: IDENTIFIER {
+            declared = true;
+            Symbol *sym = append_sym($1, line_num)
+            declared = false;
+            if (sym == NULL) {
+                char buf[80];
+                sprintf(buf, "Identifier %s is already declared in scope", $1);
+                yyerror(buf);
+            }
+        }
+    ;
+
+identifier: IDENTIFIER {
+            Symbol *sym = append_sym($1, line_num)
+            if (sym == NULL) {
+                char buf[80];
+                sprintf(buf, "Identifier %s is not declared", $1);
+                yyerror(buf);
+            }
+        }
+    ;
+
 primary_exp: constant
-    | IDENTIFIER
+    | identifier
     | func_call
     | LTPAR exp RTPAR
     ;
@@ -104,15 +129,18 @@ type: INT { $$ = INT_TYPE; }
     | CHAR { $$ = CHAR_TYPE; }
     ;
 
-func_arglist: PTR IDENTIFIER
+func_arglist: PTR identifier
     | exp
     | exp COMMA func_arglist
-    | PTR IDENTIFIER COMMA func_arglist
+    | PTR identifier COMMA func_arglist
     ;
 
-func_call: IDENTIFIER LTPAR x;
+func_call_args: RTPAR
+    | func_arglist RTPAR
+    ;
 
-x: func_arglist RTPAR | RTPAR;
+func_call: identifier LTPAR func_call_args
+    ;
 
 unary_exp: primary_exp 
     | PLUS unary_exp
@@ -143,7 +171,7 @@ exp: comp_exp
 
 /* statements */
 
-assign_st: IDENTIFIER ASSIGNMENT exp SEMICOLON
+assign_st: identifier ASSIGNMENT exp SEMICOLON
     ;
 
 if_st: IF { inc_scope(); } LTPAR exp RTPAR st { hide_scope(); inc_scope(); } else { hide_scope(); }
@@ -184,14 +212,14 @@ return_type: VOID
     | type 
     ;
 
-func_param: type IDENTIFIER
+func_param: type dec_identifier
     ;
 
 func_paramlist: func_param
     | func_param COMMA func_paramlist
     ;
 
-var_def: { declared = true; } type { declared = false } IDENTIFIER ASSIGNMENT constant SEMICOLON
+var_def: type dec_identifier ASSIGNMENT constant SEMICOLON
     ;
 
 var_deflist: /* epsilon */
@@ -205,8 +233,8 @@ func_stlist: ret_st
 func_body: var_deflist func_stlist
     ;
 
-func_def: { declared = true } return_type IDENTIFIER LTPAR { declared = false; inc_scope(); } func_paramlist RTPAR LTBRACE func_body RTBRACE { hide_scope(); }
-    | { declared = true } return_type IDENTIFIER LTPAR VOID { declared = false; inc_scope(); } RTPAR LTBRACE func_body RTBRACE { hide_scope(); }
+func_def: return_type dec_identifier LTPAR { inc_scope(); } func_paramlist RTPAR LTBRACE func_body RTBRACE { hide_scope(); }
+    | return_type dec_identifier LTPAR VOID { inc_scope(); } RTPAR LTBRACE func_body RTBRACE { hide_scope(); }
     ;
 
 /* programs */
@@ -215,7 +243,7 @@ func_deflist: /* epsilon */
     | func_deflist func_def
     ;
 
-main: INT MAIN { inc_scope(); } LTPAR VOID RTPAR LTBRACE func_body RTBRACE { hide_scope(); }
+main: INT MAIN { append_sym($2, line_num); inc_scope(); } LTPAR VOID RTPAR LTBRACE func_body RTBRACE { hide_scope(); }
     ;
 
 %%
