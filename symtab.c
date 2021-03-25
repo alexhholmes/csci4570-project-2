@@ -14,14 +14,14 @@ Symbol *append_sym(char *name, SymbolType type, ReturnType ret_type, int line_nu
         // Declared symbol must check if it's already been declared
         // in the current scope.
         if (!is_sym_declared_scoped(name, curr_scope)) {
-            append_sym_unchecked(name, declared, type, ret_type, line_num);
+            append_sym_unchecked(name, type, ret_type, line_num);
             return sym_table;
         }
     } else {
         // Undeclared symbol must check if symbol already exists in
         // the symbol table (has been declared).
         if (lookup_sym(name) != NULL) {
-            append_sym_unchecked(name, declared, type, ret_type, line_num);
+            append_sym_unchecked(name, type, ret_type, line_num);
         }
     }
     // Returns null if unable to add to symbol table
