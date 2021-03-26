@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "tinylex.tab.h"
 
+extern int num_line;
 extern int yylex();
 extern void yyerror(char *s);
 %}
@@ -97,6 +98,7 @@ type: INT
 func_arglist: PTR IDENTIFIER
 	| exp
 	| exp COMMA func_arglist
+    | PTR IDENTIFIER COMMA func_arglist
 	;
 
 func_call: IDENTIFIER LTPAR x;
@@ -139,7 +141,7 @@ if_st: IF LTPAR exp RTPAR st %prec NO_ELSE
   | IF LTPAR exp RTPAR st ELSE st
   ;
 
-while_st: WHILE RTPAR exp LTPAR st
+while_st: WHILE LTPAR exp RTPAR st
 	;
 
 ret_st: RETURN SEMICOLON
@@ -162,6 +164,7 @@ st: assign_st
 	| ret_st
 	| block_st
 	| empty_st
+    | func_call SEMICOLON
 	;
 
 /* functions */
@@ -197,7 +200,7 @@ func_def: return_type IDENTIFIER LTPAR func_paramlist RTPAR LTBRACE func_body RT
 
 /* programs */
 
-func_deflist: 
+func_deflist: /* epsilon */
 	| func_deflist func_def 
 	;
 
@@ -206,7 +209,7 @@ main: INT MAIN LTPAR VOID RTPAR LTBRACE func_body RTBRACE
 
 %%
 void yyerror(char *s) {
-	printf("\n Error: %s\n",s);
+	printf("\n Error: %s on line %d\n", s, num_line);
 }
 
 int yywrap() {
@@ -215,9 +218,6 @@ int yywrap() {
 }
 
 int main(void) {
-	#ifdef YYDEBUG
-  	yydebug = 1;
-	#endif
 	yyparse();
 	return 0;
 }

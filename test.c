@@ -13,6 +13,8 @@ int main(void)
     int a = 0;
     int b = 0;
     int c = 0;
+
+    printf("Hello world! %d %d", a, );
     
     return 0; 
 }

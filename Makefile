@@ -1,9 +1,8 @@
 CC = gcc
 CFLAG = -ll
 L = flex
-LFLAG = -d
 B = bison
-BFLAG = -vtd
+BFLAG = -vd
 
 all: parser
 
