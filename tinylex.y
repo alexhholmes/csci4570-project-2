@@ -101,36 +101,38 @@ extern void yyerror(char *err_message);
 
 %% 
 
-program: func_deflist main func_deflist
+program: func_deflist main func_deflist 
     ;
 
-dec_identifier: IDENTIFIER {
-            declared = true;
-            Symbol *sym = append_sym($1, line_num)
-            declared = false;
-            if (sym == NULL) {
-                char buf[80];
-                sprintf(buf, "Identifier %s is already declared in scope", $1);
-                yyerror(buf);
-            }
-            $$ = $1;
-        }
+dec_identifier: IDENTIFIER 
+            {
+                declared = true;
+                Symbol *sym = append_sym($1, line_num)
+                declared = false;
+                if (sym == NULL) {
+                    char buf[80];
+                    sprintf(buf, "Identifier %s is already declared in scope", $1);
+                    yyerror(buf);
+                }   
+                $$ = $1;
+            }   
     ;
 
-identifier: IDENTIFIER {
-            Symbol *sym = append_sym($1, line_num)
-            if (sym == NULL) {
-                char buf[80];
-                sprintf(buf, "Identifier %s is not declared", $1);
-                yyerror(buf);
+identifier: IDENTIFIER 
+            {
+                Symbol *sym = append_sym($1, line_num)
+                if (sym == NULL) {
+                    char buf[80];
+                    sprintf(buf, "Identifier %s is not declared", $1);
+                    yyerror(buf);
+                }
+                $$ = $1;
             }
-            $$ = $1;
-        }
     ;
 
 primary_exp: constant   { $$ = $1; }
-    | identifier        { $$ = }
-    | func_call
+    | identifier        { $$ = $1; }
+    | func_call         { $$ = $1; }
     | LTPAR exp RTPAR   { $$ = $2 }
     ;
 
@@ -145,9 +147,9 @@ type: INT { $$ = INT_TYPE; }
     | CHAR { $$ = CHAR_TYPE; }
     ;
 
-func_arglist: PTR identifier
+func_arglist: PTR identifier { $$ = $2; }
     | exp { $$ = $1; }
-    | exp COMMA func_arglist
+    | exp COMMA func_arglist 
     | PTR identifier COMMA func_arglist
     ;
 
@@ -156,84 +158,90 @@ func_call_args: RTPAR { $$ = NULL; }
     ;
 
 func_call: identifier LTPAR func_call_args
+        {
+            $$ = new_funccall_node($1, $3);
+        }
     ;
 
 unary_exp: primary_exp { $$ = $1; }
-    | PLUS unary_exp 
-        {
-            
-        }
-    | MINUS unary_exp
-        {
-           
-        }
+    | PLUS unary_exp { $$ = $1; }
+    | MINUS unary_exp { $$ = $1; }
     ;
 
 mult_exp: unary_exp { $$ = $1; }
     | mult_exp MULTIPLY unary_exp
         {
-            $$ = new_arith_node($2.int_value, $1, $3);
+            $$ = new_arith_node(MUL, $1, $3);
         }
     | mult_exp DIVIDE unary_exp
         {
-            $$ = new_arith_node($2.int_value, $1, $3);
+            $$ = new_arith_node(DIV, $1, $3);
         }
     ;
 
 add_exp: mult_exp { $$ = $1; }
     | add_exp PLUS add_exp
         {
-            $$ = new_arith_node($2.int_value, $1, $3);
+            $$ = new_arith_node(ADD, $1, $3);
         }
     | add_exp MINUS add_exp
         {
-            $$ = new_arith_node($2.int_value, $1, $3);
+            $$ = new_arith_node(SUB, $1, $3);
         }
     ;
 
 comp_exp: add_exp { $$ = $1; }
     | add_exp LT add_exp
         {
-            $$ = new_rel_node($2.int_value, $1, $3);
+            $$ = new_rel_node(LESS, $1, $3);
         }
     | add_exp LTE add_exp
         {
-            $$ = new_rel_node($2.int_value, $1, $3);
+            $$ = new_rel_node(LESS_EQUAL, $1, $3);
         }
     | add_exp GT add_exp
         {
-            $$ = new_rel_node($2.int_value, $1, $3);
+            $$ = new_rel_node(GREATER, $1, $3);
         }
     | add_exp GTE add_exp
         {
-            $$ = new_rel_node($2.int_value, $1, $3);
+            $$ = new_rel_node(GREATER_EQUAL, $1, $3);
         }
     ;
 
 exp: comp_exp { $$ = $1; }
     | comp_exp EQUAL comp_exp
         {
-            $$ = new_equal_node($2.int_value, $1, $3);
+            $$ = new_equal_node(EQ, $1, $3);
         }
     | comp_exp NOT_EQUAL comp_exp
         {
-            $$ = new_equal_node($2.int_value, $1, $3);
+            $$ = new_equal_node(NOT_EQ, $1, $3);
         }
     ;
 
 /* statements */
 
 assign_st: identifier ASSIGNMENT exp SEMICOLON
+        {
+            $$ = new_assign_node($1, $3);
+        }
     ;
 
 if_st: IF { inc_scope(); } LTPAR exp RTPAR st { hide_scope(); inc_scope(); } else { hide_scope(); }
+        {
+            $$ = new_if_node($3, $5, $6);
+        }
     ;
 
-else: %prec NO_ELSE
-    | ELSE st
+else: %prec NO_ELSE {$$ = NULL; }
+    | ELSE st { $$ = $2; }
     ;
 
 while_st: { inc_scope(); } WHILE LTPAR exp RTPAR st { hide_scope(); }
+        {
+            $$ = new_while_node($3, $5);
+        }
     ;
 
 ret_st: RETURN SEMICOLON
@@ -243,14 +251,17 @@ ret_st: RETURN SEMICOLON
         }
     ;
 
-st_list: /* epsilon */ 
-    | st_list st
+st_list: /* epsilon */ { $$ = NULL; }
+    | st_list st 
+        {
+            $$ = $2;
+        }
     ;
 
-block_st: LTBRACE st_list RTBRACE
+block_st: LTBRACE st_list RTBRACE { $$ = $2; }
     ;
 
-empty_st: SEMICOLON
+empty_st: SEMICOLON { $$ = NULL; }
     ;
 
 st: assign_st { $$ = $1; }
@@ -263,11 +274,11 @@ st: assign_st { $$ = $1; }
     ;
 
 /* functions */
-return_type: VOID
-    | type 
+return_type: VOID { $$ = $1; }
+    | type { $$ = $1; }
     ;
 
-func_param: type dec_identifier
+func_param: type dec_identifier 
     ;
 
 func_paramlist: func_param
@@ -275,6 +286,10 @@ func_paramlist: func_param
     ;
 
 var_def: type dec_identifier ASSIGNMENT constant SEMICOLON
+        {
+            ASTDeclareNode = new_decl_node($1,$2);
+            $$ = new_assign_node(ASTDeclareNode, $4);
+        }
     ;
 
 var_deflist: /* epsilon */

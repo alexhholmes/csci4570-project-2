@@ -52,12 +52,11 @@ ASTNode *new_mainrt_node() {
     return (ASTNode*) v;
 }
 
-ASTNode *new_funccall_node(Symbol *entry, ASTNode *params, int num_of_params) {
+ASTNode *new_funccall_node(Symbol *entry, ASTNode *params) {
     ASTFuncCallNode *v = malloc (sizeof(ASTFuncCallNode));
     v->type = FUNC_CALL; 
     v->entry = entry; 
     v->params = params;
-    v->num_of_params = num_of_params;
     return (ASTNode*) v;
 }
 
@@ -96,6 +95,14 @@ ASTNode *new_funcdecl_node(int ret_type, Symbol *entry) {
     return (ASTNode*) v;
 }
 
+ASTNode *new_decl_node(int var_type, Symbol *entry) {
+    ASTDeclNode *v = malloc (sizeof(ASTDeclNode));
+    v->type = DECL_NODE; 
+    v->var_type = var_type; 
+    v->entry = entry;
+    return (ASTNode*) v;
+}
+
 ASTNode *new_return_node(int ret_type, ASTNode *ret_val) {
     ASTReturnNode *v = malloc (sizeof(ASTReturnNode));
     v->type = RETURN_NODE; 
@@ -103,4 +110,5 @@ ASTNode *new_return_node(int ret_type, ASTNode *ret_val) {
     v->ret_val = ret_val;
     return (ASTNode*) v;
 }
+
 
