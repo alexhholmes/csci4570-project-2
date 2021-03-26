@@ -1,5 +1,5 @@
 CC = gcc
-CFLAG = -ll
+CFLAG = 
 L = flex
 B = bison
 BFLAG = -vd
