@@ -146,7 +146,6 @@ typedef struct ASTReturnNode {
 } ASTReturnNode;
 
 
-
 // TODO NODE MANAGEMENT
 
 ASTNode *new_ast_node(NodeType type, ASTNode *left, ASTNode *right);

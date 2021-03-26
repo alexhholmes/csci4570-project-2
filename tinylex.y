@@ -12,7 +12,7 @@ extern int yylex();
 extern void yyerror(char *err_message);
 %}
 
-%token MAIN /* TODO */
+%token <symtab_node> MAIN /* TODO */
 
 /* Keywords */   
 %token <val> IF 
@@ -81,8 +81,8 @@ extern void yyerror(char *err_message);
 %type <node> assign_st
 %type <node> if_st else
 %type <node> while_st
-%type <node> ret_st;
-%type <node> st st_list block_st;
+%type <node> ret_st
+%type <node> st st_list block_st empty_st
 %type <node> return_type
 %type <node> func_param func_paramlist
 %type <node> var_def var_deflist
@@ -149,8 +149,8 @@ type: INT { $$ = INT_TYPE; }
 
 func_arglist: PTR identifier { $$ = $2; }
     | exp { $$ = $1; }
-    | exp COMMA func_arglist 
-    | PTR identifier COMMA func_arglist
+    | exp COMMA func_arglist
+    | PTR identifier COMMA func_arglist { $$ = $2 }
     ;
 
 func_call_args: RTPAR { $$ = NULL; }
@@ -309,7 +309,7 @@ func_def: return_type dec_identifier LTPAR { inc_scope(); } func_paramlist RTPAR
 
 /* programs */
 
-func_deflist: /* epsilon */
+func_deflist: /* epsilon */ { }
     | func_deflist func_def
     ;
 
